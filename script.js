@@ -1,13 +1,26 @@
 window.onload = function () {
   var playerName = "hello";
+  var timerStatus = 0;
+  var time = 0;
+  const createTimer = () => {
+    let myTimer = setInterval(clock, 100);
+
+    function clock() {
+      if (timerStatus == 2) {
+        clearInterval(myTimer);
+      }
+      document.getElementById("time").textContent = ` Time : ${(
+        time + 0.1
+      ).toFixed(2)}`;
+      time += 0.1;
+    }
+  };
+
   const createGamePage = () => {
     const increment = 105 / 2 - 25 / 2;
 
     const n = 4;
     const m = 5;
-
-    var timerStatus = 0;
-    var time = 0;
 
     let currentPos = 0;
 
@@ -79,7 +92,7 @@ window.onload = function () {
         var pos = getPos("ball").y;
         var ePos = pos;
         clearInterval(id);
-        id = setInterval(frame, 10);
+        id = setInterval(frame, 5);
         function frame() {
           if (ePos == pos + 110) {
             clearInterval(id);
@@ -99,7 +112,7 @@ window.onload = function () {
         var pos = getPos("ball").y;
         var ePos = pos;
         clearInterval(id);
-        id = setInterval(frame, 10);
+        id = setInterval(frame, 5);
         function frame() {
           if (ePos == pos - 110) {
             clearInterval(id);
@@ -119,7 +132,7 @@ window.onload = function () {
         var pos = getPos("ball").x;
         var ePos = pos;
         clearInterval(id);
-        id = setInterval(frame, 10);
+        id = setInterval(frame, 5);
         function frame() {
           if (ePos == pos - 110) {
             clearInterval(id);
@@ -155,19 +168,11 @@ window.onload = function () {
 
     const dieRoll = () => {
       var temp = Math.floor(Math.random() * 6) + 1;
-      if (timerStatus == 0) {
-        timerStatus = 1;
-        createTimer();
-      }
+
       console.log(temp);
       document.getElementById("die").textContent = temp;
 
-      if (currentPos >= n * m) {
-        alert(`game Over you took ${time} seconds`);
-        timerStatus = 2;
-      } else {
-        movement(temp);
-      }
+      movement(temp);
     };
 
     const createDieComponent = () => {
@@ -182,6 +187,9 @@ window.onload = function () {
 
       var name = document.createElement("div");
       name.textContent = `Welcome ${playerName}`;
+      name.style.fontSize = "20px";
+      name.style.fontWeight = "bold";
+      name.style.color = "white";
       name.style.textAlign = "center";
       name.style.margin = "0 50px";
       name.style.padding = "10px 0";
@@ -224,18 +232,6 @@ window.onload = function () {
       return timeDiv;
     };
 
-    const createTimer = () => {
-      let myTimer = setInterval(clock, 100);
-
-      function clock() {
-        if (timerStatus == 2) {
-          clearInterval(myTimer);
-        }
-        document.getElementById("time").textContent = (time + 0.1).toFixed(2);
-        time += 0.1;
-      }
-    };
-
     document.body.style.margin = "75px";
     document.body.style.background = "green";
     document.getElementById("hello").appendChild(createGrid(n, m));
@@ -253,11 +249,19 @@ window.onload = function () {
     }
 
     function startGame() {
+      if (document.getElementById("input").value == "") {
+        alert("enter player name");
+        return;
+      }
       console.log(playerName);
       playerName = document.getElementById("input").value;
       console.log(playerName);
       removeAllChildNodes(document.getElementById("hello"));
       createGamePage();
+      if (timerStatus == 0) {
+        timerStatus = 1;
+        createTimer();
+      }
     }
 
     var dataDiv = document.createElement("div");
